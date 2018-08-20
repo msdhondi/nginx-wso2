@@ -21,7 +21,7 @@
 -name: Check if '{{ WSO2_user }}' exists
  shell: "cat /etc/passwd | grep {{ WSO2_user }}"
  register: user_check
- failed_when: "'FAILED' in user_check.stderr
+ failed_when: "'FAILED' in user_check.stderr"
 
 -name: Create '{{ WSO2_user }}'
  user:
@@ -30,7 +30,7 @@
     comment: "WSO2 {{WSO2_product_name }} user"
     group: "{{ WSO2_group }}"
    when: user_check.rc > 0
-    
+
 
 
 
