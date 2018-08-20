@@ -1,36 +1,35 @@
--name: Check if '{{ WSO2_group }}' exists
- shell: "cat /etc/group | grep {{ WSO2_group }}"
- register: group_check
- failed_when: "'FAILED' in group_check.stderr"
+---
+- hosts: all
+  tasks:
+    -name: Check if '{{ WSO2_group }}' exists
+     shell: "cat /etc/group | grep {{ WSO2_group }}"
+     register: group_check
+     failed_when: "'FAILED' in group_check.stderr"
 
--name: Check if '{{ WSO2_group }}' is created
- shell: "which groupadd"
- register: groupadd_check
- failed_when: "'FAILED' in group_check.stderr"
+    -name: Check if '{{ WSO2_group }}' is created
+     shell: "groupadd '{{ WSO2_group }}'"
+     register: groupadd_check
+     failed_when: "'FAILED' in group_check.stderr"
 
--name: fail the play if the previous command did not succeed
- fail: msg="The command 'groupadd' not available"
- when: groupadd_check.rc > 0
+    -name: fail the play if the previous command did not succeed
+     fail: msg="The command 'groupadd' not available"
+     when: groupadd_check.rc > 0
 
--name: Create '{{ WSO2_group }}'
- group:
-    name: "{{ WSO2_group }}"
-    state: present
-   when: groupadd_check.rc > 0
+    -name: Create '{{ WSO2_group }}'
+     group:
+       name: "{{ WSO2_group }}"
+       state: present
+     when: groupadd_check.rc > 0
 
--name: Check if '{{ WSO2_user }}' exists
- shell: "cat /etc/passwd | grep {{ WSO2_user }}"
- register: user_check
- failed_when: "'FAILED' in user_check.stderr"
+    -name: Check if '{{ WSO2_user }}' exists
+     shell: "cat /etc/passwd | grep {{ WSO2_user }}"
+     register: user_check
+     failed_when: "'FAILED' in user_check.stderr"
 
--name: Create '{{ WSO2_user }}'
- user:
-    name: "{{ WSO2_user }}"
-    password: "{{ WSO2_user_password | password_hash('sha512') }}"
-    comment: "WSO2 {{WSO2_product_name }} user"
-    group: "{{ WSO2_group }}"
-   when: user_check.rc > 0
-
-
-
-
+    -name: Create '{{ WSO2_user }}'
+     user:
+       name: "{{ WSO2_user }}"
+       password: "{{ WSO2_user_password | password_hash('sha512') }}"
+       comment: "WSO2 {{WSO2_product_name }} user"
+       group: "{{ WSO2_group }}"
+     when: user_check.rc > 0
