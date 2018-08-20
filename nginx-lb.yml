@@ -6,7 +6,7 @@
 
     - name: copy files
       copy:
-        src: /etc/ansible/roles/nginx.conf
+        src: files/nginx.conf
         dest: /etc/nginx/nginx.conf
 
     - name: start nginx
