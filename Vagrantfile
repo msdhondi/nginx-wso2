@@ -74,3 +74,44 @@ Vagrant.configure("2") do |config|
     ansible.playbook = "roles/epel-repo.yml"
   end
 end
+
+Vagrant.configure("2") do |config|
+  config.vm.define "wso21" do |wso21|
+    wso21.vm.box = "centos/7"
+    wso21.vm.hostname = 'web'
+
+    wso21.vm.network :private_network, ip: "192.168.56.101"
+
+    wso21.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "web"]
+    end
+  end
+
+  config.vm.define "wso22" do |wso22|
+    wso22.vm.box = "centos/7"
+    wso22.vm.hostname = 'web'
+
+    wso22.vm.network :private_network, ip: "192.168.56.101"
+
+    wso22.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "web"]
+    end
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.box = "centos/7"
+    db.vm.hostname = 'db'
+
+    db.vm.network :private_network, ip: "192.168.56.102"
+
+    db.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--name", "db"]
+    end
+  end
+end
