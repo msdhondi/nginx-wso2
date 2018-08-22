@@ -71,6 +71,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.verbose = "v"
-    ansible.playbook = "ansible-playbooks/roles/epel-repo.yml"
+    ansible.playbook = "roles/epel-repo.yml"
   end
 end
