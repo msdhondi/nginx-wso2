@@ -107,7 +107,10 @@ Vagrant.configure("2") do |config|
     db.vm.hostname = 'db'
 
     db.vm.network :private_network, ip: "192.168.56.102"
-
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "v"
+    ansible.playbook = "roles/rdbms.yml"
+  end
     db.vm.provider :virtualbox do |v|
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       v.customize ["modifyvm", :id, "--memory", 512]

@@ -1,0 +1,53 @@
+---
+- hosts: all
+  sudo: yes
+  remote_user: root
+  gather_facts: yes
+
+  roles:
+    - rdbms
+
+  tasks:
+
+    - name: Install pip
+      yum: name=python-pip state=present
+
+    - name: Download MySQL Community Repo
+      get_url:
+        url: http://repo.mysql.com/mysql80-community-release-el7-1.noarch.rpm
+        dest: /tmp
+
+    - name: Install MySQL Community Repo
+      command: cd /tmp
+      command: yum localinstall mysql80-community-release-el7-1.noarch.rpm
+    
+    - name: Install the MySQL Community Edition repository
+      shell: rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
+      args:
+        creates: /etc/yum.repos.d/mysql-community.repo
+
+    - name: Install MySQL Server
+      yum: name=mysql-community-server state=present
+    
+    - name: install mysql-python module
+      yum: name=MySQL-python state=present
+    
+    - name: Configure my.cnf
+      copy: src=./files/my.cnf
+            dest=/etc/my.cnf
+            owner=root
+            group=root
+            mode=0640
+    - name: Start service mysqld, if not running
+      service:
+        name: mysqld
+        state: started
+
+    - name: Create database user
+      mysql_user: user=manish password=12345 priv=*.*:ALL state=present
+
+    - name: Create database
+      mysql_db: name=bobdata state=present
+
+    - name: Ensure no user named 'sally' exists and delete if found.
+      mysql_user: user=sally state=absent
